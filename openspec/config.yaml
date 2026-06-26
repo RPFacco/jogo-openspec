@@ -1,4 +1,7 @@
 schema: spec-driven
+context: |
+  Tech stack: Java 21, libGDX 1.14.2, LWJGL3 (desktop)
+  Full game design: see docs/game-design.md
 
 # Project context (optional)
 # This is shown to AI when creating artifacts.
