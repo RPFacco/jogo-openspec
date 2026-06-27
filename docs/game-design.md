@@ -37,7 +37,24 @@ Quizzes are triggered in two ways:
 - **Peaceful NPC:** triggers the quiz automatically upon proximity
 - **Enemy NPC:** triggers the quiz linked to it upon being defeated
 
-Each NPC has a specific, fixed quiz. The quiz bank is stored in `assets/data/quizzes.json`, indexed by `quiz_id`. **Schema: to be defined**.
+Each NPC has a specific, fixed quiz. The quiz bank is stored in `assets/data/quizzes.json`, indexed by `quiz_id`:
+
+```json
+{
+  "1": {
+    "question": "What is encapsulation in OOP?",
+    "choices": [
+      "Hiding internal details and exposing an interface",
+      "Creating multiple instances of a class",
+      "Inheriting behavior from a parent class",
+      "Overriding a method from the superclass"
+    ],
+    "correct": 0
+  }
+}
+```
+
+- `correct` is the 0-based index into the `choices` array.
 
 ---
 
@@ -60,7 +77,41 @@ The architecture is **data-driven**: adding a new map requires no changes to any
 1. Create `assets/maps/new-map.tmx` in Tiled with layout, NPCs, and custom properties (`quiz_id` per NPC)
 2. Register the map and its directional connections in `assets/data/maps.json`
 
-Map transitions are **directional** — each border (north, south, east, west) can be connected to a specific map, configured in `maps.json`. The player can move freely between connected maps. **Schema for `maps.json`: to be defined**.
+Map transitions are **directional** — each border (north, south, east, west) can be connected to a specific map, configured in `maps.json`. The player can move freely between connected maps.
+
+Schema for `maps.json`:
+
+```json
+{
+  "startMap": "map01",
+  "maps": {
+    "map01": {
+      "file": "maps/map01.tmx",
+      "connections": {
+        "north": null,
+        "south": "map02",
+        "east": null,
+        "west": null
+      }
+    },
+    "map02": {
+      "file": "maps/map02.tmx",
+      "connections": {
+        "north": "map01",
+        "south": null,
+        "east": null,
+        "west": null
+      }
+    }
+  }
+}
+```
+
+- `startMap`: which map the player loads when the game starts
+- `maps`: dictionary indexed by map ID
+- `file`: path relative to the `assets/` directory
+- `connections`: each direction can point to another map ID, or `null` (dead end)
+- When transitioning through a border, the player spawns on the opposite border of the destination map
 
 ### Asset structure
 
