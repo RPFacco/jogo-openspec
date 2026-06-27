@@ -22,8 +22,8 @@ import com.jogoopenspec.game.data.MoveEntity;
 
 public class GameplayScreen implements Screen {
 
-    private static final float MAP_WIDTH = 640;
-    private static final float MAP_HEIGHT = 480;
+    private static final float MAP_WIDTH = 1920;
+    private static final float MAP_HEIGHT = 1080;
 
     private final Game game;
     private OrthographicCamera camera;
@@ -87,7 +87,7 @@ public class GameplayScreen implements Screen {
             }
         }
 
-        shapeRenderer.setColor(0.2f, 0.6f, 1f, 1);
+        shapeRenderer.setColor(0.6f, 0.2f, 0.8f, 1);
         shapeRenderer.rect(player.x, player.y, player.width, player.height);
         shapeRenderer.end();
     }
