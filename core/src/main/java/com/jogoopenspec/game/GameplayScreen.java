@@ -83,7 +83,7 @@ public class GameplayScreen implements Screen {
 
         if (Gdx.input.justTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
+            viewport.unproject(touchPos);
 
             if (touchPos.x >= 0 && touchPos.x <= MAP_WIDTH
                     && touchPos.y >= 0 && touchPos.y <= MAP_HEIGHT) {
