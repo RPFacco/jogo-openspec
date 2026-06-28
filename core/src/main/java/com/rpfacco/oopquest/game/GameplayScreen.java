@@ -44,6 +44,7 @@ public class GameplayScreen implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean initialized;
+    private boolean leaving;
 
     public GameplayScreen(OopQuest jogoGame) {
         this.jogoGame = jogoGame;
@@ -80,6 +81,12 @@ public class GameplayScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
+        if (leaving) {
+            jogoGame.getGameState().reset();
+            dispose();
+            jogoGame.setScreen(new MainMenuScreen(jogoGame));
+            return;
+        }
 
         player.update(delta);
         checkMoveEntityOverlap();
@@ -119,10 +126,7 @@ public class GameplayScreen implements Screen {
 
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.log("GameplayScreen", "ESCAPE pressed, resetting game state");
-            jogoGame.getGameState().reset();
-            dispose();
-            jogoGame.setScreen(new MainMenuScreen(jogoGame));
+            leaving = true;
             return;
         }
 

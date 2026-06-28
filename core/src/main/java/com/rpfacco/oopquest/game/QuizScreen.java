@@ -34,6 +34,7 @@ public class QuizScreen implements Screen {
     private Rectangle[] choiceRects;
     private Vector3 touchPos;
     private GlyphLayout glyphLayout;
+    private boolean leaving;
     private boolean gameOver;
 
     public QuizScreen(OopQuest jogoGame, Screen gameplayScreen, String quizId, QuizData quiz) {
@@ -74,6 +75,10 @@ public class QuizScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
+        if (leaving) {
+            dispose();
+            return;
+        }
 
         Gdx.gl.glClearColor(0.05f, 0.05f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -129,6 +134,7 @@ public class QuizScreen implements Screen {
 
                 if (i == quiz.correct) {
                     gameState.completedQuizzes.add(quizId);
+                    leaving = true;
                     if (gameState.completedQuizzes.size() >= QuizLoader.load().size()) {
                         Gdx.app.log("QuizScreen", "all quizzes completed, resetting");
                         gameState.reset();
