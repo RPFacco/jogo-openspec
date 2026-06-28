@@ -5,6 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.rpfacco.oopquest.game.MovementStrategy;
+import com.rpfacco.oopquest.game.WaypointMovement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,17 +38,21 @@ public class EnemyLoader {
                 enemy.width = enemyVal.getFloat("width");
                 enemy.height = enemyVal.getFloat("height");
                 enemy.speed = enemyVal.getFloat("speed");
+                enemy.moving = true;
 
-                JsonValue waypoints = enemyVal.get("waypoints");
-                enemy.waypointX = new float[waypoints.size];
-                enemy.waypointY = new float[waypoints.size];
-                for (int i = 0; i < waypoints.size; i++) {
-                    enemy.waypointX[i] = waypoints.get(i).getFloat("x");
-                    enemy.waypointY[i] = waypoints.get(i).getFloat("y");
+                JsonValue movement = enemyVal.get("movement");
+                if (movement != null) {
+                    String type = movement.getString("type");
+                    switch (type) {
+                        case "waypoint":
+                            enemy.strategy = WaypointMovement.fromJson(movement);
+                            break;
+                        default:
+                            Gdx.app.error("EnemyLoader", "Unknown movement type: " + type);
+                            break;
+                    }
                 }
 
-                enemy.currentWaypoint = 1;
-                enemy.moving = true;
                 enemies.add(enemy);
             }
             cache.put(mapId, enemies);
