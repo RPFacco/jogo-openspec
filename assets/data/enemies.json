@@ -13,6 +13,11 @@
           { "x": 1600, "y": 940 },
           { "x": 1400, "y": 540 }
         ]
+      },
+      "shoot": {
+        "type": "burst",
+        "burstSize": 3,
+        "cooldown": 2
       }
     }
   ]

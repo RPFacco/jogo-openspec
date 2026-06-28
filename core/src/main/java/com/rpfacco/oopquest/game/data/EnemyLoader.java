@@ -5,7 +5,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.rpfacco.oopquest.game.BurstPattern;
 import com.rpfacco.oopquest.game.MovementStrategy;
+import com.rpfacco.oopquest.game.ShootPattern;
 import com.rpfacco.oopquest.game.WaypointMovement;
 
 import java.util.HashMap;
@@ -49,6 +51,19 @@ public class EnemyLoader {
                             break;
                         default:
                             Gdx.app.error("EnemyLoader", "Unknown movement type: " + type);
+                            break;
+                    }
+                }
+
+                JsonValue shoot = enemyVal.get("shoot");
+                if (shoot != null) {
+                    String type = shoot.getString("type");
+                    switch (type) {
+                        case "burst":
+                            enemy.shootPattern = BurstPattern.fromJson(shoot);
+                            break;
+                        default:
+                            Gdx.app.error("EnemyLoader", "Unknown shoot type: " + type);
                             break;
                     }
                 }

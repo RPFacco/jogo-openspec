@@ -43,6 +43,7 @@ public class GameplayScreen implements Screen {
     private Rectangle entityRect;
     private NpcSystem npcSystem;
     private EnemySystem enemySystem;
+    private ProjectileSystem projectileSystem;
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean initialized;
@@ -64,6 +65,7 @@ public class GameplayScreen implements Screen {
 
         npcSystem = new NpcSystem();
         enemySystem = new EnemySystem();
+        projectileSystem = new ProjectileSystem();
 
         mapData = MapLoader.load();
         currentMapId = mapData.startMap;
@@ -93,6 +95,8 @@ public class GameplayScreen implements Screen {
 
         player.update(delta);
         enemySystem.update(delta);
+        enemySystem.updateShooting(player, delta, projectileSystem);
+        projectileSystem.update(delta);
         checkMoveEntityOverlap();
         playerRect.set(player.x, player.y, player.width, player.height);
         npcSystem.checkProximity(playerRect, jogoGame.getGameState(), this::onNpcTrigger);
@@ -123,6 +127,7 @@ public class GameplayScreen implements Screen {
 
         npcSystem.render(shapeRenderer, jogoGame.getGameState());
         enemySystem.render(shapeRenderer);
+        projectileSystem.render(shapeRenderer);
 
         shapeRenderer.setColor(0.6f, 0.2f, 0.8f, 1);
         shapeRenderer.rect(player.x, player.y, player.width, player.height);
@@ -179,6 +184,7 @@ public class GameplayScreen implements Screen {
 
         npcSystem.setNpcs(NpcLoader.load().get(mapId));
         enemySystem.setEnemies(EnemyLoader.load().get(mapId));
+        projectileSystem.clear();
     }
 
     private void onNpcTrigger(String quizId, QuizData quiz) {
