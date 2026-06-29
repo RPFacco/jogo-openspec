@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class QuizLoader {
 
-    private static Map<String, QuizData> cache;
+    private Map<String, QuizData> cache;
 
-    public static Map<String, QuizData> load() {
+    public Map<String, QuizData> load() {
         if (cache != null) return cache;
 
         FileHandle file = Gdx.files.internal("data/quizzes.json");

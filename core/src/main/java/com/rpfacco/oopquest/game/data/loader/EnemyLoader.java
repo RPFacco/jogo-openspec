@@ -13,13 +13,9 @@ import java.util.Map;
 
 public class EnemyLoader {
 
-    private static Map<String, Array<EnemyEntity>> cache;
+    private Map<String, Array<EnemyEntity>> cache;
 
-    public static void clearCache() {
-        cache = null;
-    }
-
-    public static Map<String, Array<EnemyEntity>> load() {
+    public Map<String, Array<EnemyEntity>> load() {
         if (cache != null) return cache;
 
         FileHandle file = Gdx.files.internal("data/enemies.json");
@@ -65,5 +61,9 @@ public class EnemyLoader {
             cache.put(mapId, enemies);
         }
         return cache;
+    }
+
+    public void reload() {
+        cache = null;
     }
 }

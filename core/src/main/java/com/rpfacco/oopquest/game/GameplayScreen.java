@@ -9,7 +9,7 @@ import com.rpfacco.oopquest.game.data.model.MoveEntity;
 import com.rpfacco.oopquest.game.data.model.Player;
 import com.rpfacco.oopquest.game.data.model.ProjectileEntity;
 import com.rpfacco.oopquest.game.data.model.QuizData;
-import com.rpfacco.oopquest.game.data.loader.QuizLoader;
+import com.rpfacco.oopquest.game.data.loader.DataManager;
 
 public class GameplayScreen extends BaseScreen {
 
@@ -39,12 +39,13 @@ public class GameplayScreen extends BaseScreen {
         super.show();
         font.getData().setScale(2);
 
+        DataManager dataManager = app.getDataManager();
         playerSystem = new PlayerSystem();
-        npcSystem = new NpcSystem();
+        npcSystem = new NpcSystem(dataManager);
         enemySystem = new EnemySystem();
         projectileSystem = new ProjectileSystem();
 
-        mapManager = new MapManager(npcSystem, enemySystem, projectileSystem);
+        mapManager = new MapManager(dataManager, npcSystem, enemySystem, projectileSystem);
         mapManager.loadMap(mapManager.getStartMap());
 
         float playerX = GameConfig.MAP_WIDTH / 2f - 12;
@@ -111,16 +112,16 @@ public class GameplayScreen extends BaseScreen {
 
     private void onNpcTrigger(String quizId, QuizData quiz) {
         player.setTarget(player.getX(), player.getY());
-        app.setScreen(new QuizScreen(app, this, quizId, quiz));
+        app.setScreen(new QuizScreen(app, this, quizId, quiz, app.getDataManager()));
     }
 
     private void onEnemyDeath(EnemyEntity e) {
         String quizId = e.getQuizId();
         if (quizId == null) return;
         if (app.getGameState().isCompleted(quizId)) return;
-        QuizData quiz = QuizLoader.load().get(quizId);
+        QuizData quiz = app.getDataManager().getQuiz(quizId);
         if (quiz != null) {
-            app.setScreen(new QuizScreen(app, this, quizId, quiz));
+            app.setScreen(new QuizScreen(app, this, quizId, quiz, app.getDataManager()));
         }
     }
 

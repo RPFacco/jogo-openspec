@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class NpcLoader {
 
-    private static Map<String, Array<NpcEntity>> cache;
+    private Map<String, Array<NpcEntity>> cache;
 
-    public static Map<String, Array<NpcEntity>> load() {
+    public Map<String, Array<NpcEntity>> load() {
         if (cache != null) return cache;
 
         FileHandle file = Gdx.files.internal("data/npcs.json");

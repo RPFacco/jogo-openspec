@@ -11,9 +11,9 @@ import com.rpfacco.oopquest.game.data.model.MoveEntity;
 
 public class MapLoader {
 
-    private static MapData cache;
+    private MapData cache;
 
-    public static MapData load() {
+    public MapData load() {
         if (cache != null) return cache;
 
         FileHandle file = Gdx.files.internal("data/maps.json");

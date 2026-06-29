@@ -6,19 +6,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.rpfacco.oopquest.game.data.model.NpcEntity;
 import com.rpfacco.oopquest.game.data.model.QuizData;
-import com.rpfacco.oopquest.game.data.loader.QuizLoader;
-
-import java.util.Map;
+import com.rpfacco.oopquest.game.data.loader.DataManager;
 
 public class NpcSystem {
 
     private Array<NpcEntity> npcs;
     private Rectangle npcTriggerRect;
-    private Map<String, QuizData> quizzes;
+    private final DataManager dataManager;
 
-    public NpcSystem() {
+    public NpcSystem(DataManager dataManager) {
+        this.dataManager = dataManager;
         npcTriggerRect = new Rectangle();
-        quizzes = QuizLoader.load();
     }
 
     public void setNpcs(Array<NpcEntity> npcs) {
@@ -38,7 +36,7 @@ public class NpcSystem {
             npcTriggerRect.set(triggerX, triggerY, triggerWidth, triggerHeight);
 
             if (playerRect.overlaps(npcTriggerRect)) {
-                QuizData quiz = quizzes.get(npc.getQuizId());
+                QuizData quiz = dataManager.getQuiz(npc.getQuizId());
                 if (quiz != null) {
                     handler.onQuizTrigger(npc.getQuizId(), quiz);
                 } else {

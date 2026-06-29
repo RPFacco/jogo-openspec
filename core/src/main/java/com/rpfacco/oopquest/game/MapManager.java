@@ -7,9 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.rpfacco.oopquest.game.data.model.MapData;
 import com.rpfacco.oopquest.game.data.model.MapEntry;
 import com.rpfacco.oopquest.game.data.model.MoveEntity;
-import com.rpfacco.oopquest.game.data.loader.MapLoader;
-import com.rpfacco.oopquest.game.data.loader.EnemyLoader;
-import com.rpfacco.oopquest.game.data.loader.NpcLoader;
+import com.rpfacco.oopquest.game.data.loader.DataManager;
 import com.rpfacco.oopquest.game.data.model.Player;
 
 public class MapManager {
@@ -17,13 +15,15 @@ public class MapManager {
     private TiledMap tiledMap;
     private OrthogonalTiledMapRenderer mapRenderer;
     private final MapData mapData;
+    private final DataManager dataManager;
     private String currentMapId;
     private final NpcSystem npcSystem;
     private final EnemySystem enemySystem;
     private final ProjectileSystem projectileSystem;
 
-    public MapManager(NpcSystem npcSystem, EnemySystem enemySystem, ProjectileSystem projectileSystem) {
-        this.mapData = MapLoader.load();
+    public MapManager(DataManager dataManager, NpcSystem npcSystem, EnemySystem enemySystem, ProjectileSystem projectileSystem) {
+        this.mapData = dataManager.getMapData();
+        this.dataManager = dataManager;
         this.npcSystem = npcSystem;
         this.enemySystem = enemySystem;
         this.projectileSystem = projectileSystem;
@@ -42,8 +42,8 @@ public class MapManager {
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         currentMapId = mapId;
 
-        npcSystem.setNpcs(NpcLoader.load().get(mapId));
-        enemySystem.setEnemies(EnemyLoader.load().get(mapId));
+        npcSystem.setNpcs(dataManager.getNpcs(mapId));
+        enemySystem.setEnemies(dataManager.getEnemies(mapId));
         projectileSystem.clear();
     }
 

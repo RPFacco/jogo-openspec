@@ -7,14 +7,15 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.rpfacco.oopquest.game.data.loader.DataManager;
 import com.rpfacco.oopquest.game.data.model.QuizData;
-import com.rpfacco.oopquest.game.data.loader.QuizLoader;
 
 public class QuizScreen extends BaseScreen {
 
     private final Screen gameplayScreen;
     private final String quizId;
     private final QuizData quiz;
+    private final DataManager dataManager;
 
     private ShapeRenderer shapeRenderer;
     private Rectangle[] choiceRects;
@@ -23,11 +24,12 @@ public class QuizScreen extends BaseScreen {
     private boolean leaving;
     private boolean gameOver;
 
-    public QuizScreen(OopQuest app, Screen gameplayScreen, String quizId, QuizData quiz) {
+    public QuizScreen(OopQuest app, Screen gameplayScreen, String quizId, QuizData quiz, DataManager dataManager) {
         super(app);
         this.gameplayScreen = gameplayScreen;
         this.quizId = quizId;
         this.quiz = quiz;
+        this.dataManager = dataManager;
     }
 
     @Override
@@ -113,7 +115,7 @@ public class QuizScreen extends BaseScreen {
                 if (i == quiz.getCorrect()) {
                     gameState.markCompleted(quizId);
                     leaving = true;
-                    if (gameState.getCompletedCount() >= QuizLoader.load().size()) {
+                    if (gameState.getCompletedCount() >= dataManager.getQuizCount()) {
                         Gdx.app.log("QuizScreen", "all quizzes completed, resetting");
                         gameState.reset();
                         app.setScreen(new VictoryScreen(app));
