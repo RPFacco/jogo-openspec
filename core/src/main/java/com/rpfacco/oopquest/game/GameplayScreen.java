@@ -15,6 +15,7 @@ public class GameplayScreen extends BaseScreen {
 
     private MapManager mapManager;
     private WorldRenderer worldRenderer;
+    private PlayerSystem playerSystem;
     private InputController inputController;
     private Player player;
     private NpcSystem npcSystem;
@@ -38,6 +39,7 @@ public class GameplayScreen extends BaseScreen {
         super.show();
         font.getData().setScale(2);
 
+        playerSystem = new PlayerSystem();
         npcSystem = new NpcSystem();
         enemySystem = new EnemySystem();
         projectileSystem = new ProjectileSystem();
@@ -66,7 +68,7 @@ public class GameplayScreen extends BaseScreen {
             return;
         }
 
-        player.update(delta);
+        playerSystem.update(player, delta);
         enemySystem.update(delta);
         enemySystem.updateShooting(player, delta, projectileSystem);
         projectileSystem.update(player, delta, enemySystem.getAliveEnemies(), this::onProjectileHit, this::onEnemyDeath);
@@ -81,7 +83,7 @@ public class GameplayScreen extends BaseScreen {
         checkMoveEntityOverlap();
         playerRect.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         npcSystem.checkProximity(playerRect, app.getGameState(), this::onNpcTrigger);
-        player.clampToBounds();
+        playerSystem.clampToBounds(player);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
