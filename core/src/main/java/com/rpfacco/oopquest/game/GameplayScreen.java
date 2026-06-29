@@ -164,12 +164,12 @@ public class GameplayScreen implements Screen {
                 float dy = target.getCenterY() - player.getCenterY();
                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                 if (dist == 0) dist = 1f;
-                p.setVx(dx / dist);
-                p.setVy(dy / dist);
-                p.setSpeed(400f);
+                p.setVx(-dy / dist);
+                p.setVy(dx / dist);
+                p.setSpeed(1800f);
                 p.setSize(8);
                 p.setAlive(true);
-                projectileSystem.add(p, new HomingBehavior(3f));
+                projectileSystem.add(p, new HomingBehavior(target, 1800f, dist));
                 homingCooldown = 0.5f;
             }
         }

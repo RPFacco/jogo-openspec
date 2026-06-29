@@ -94,10 +94,14 @@ public class ProjectileSystem {
             if (!p.isAlive()) continue;
             if (entry.behavior != null) {
                 shapeRenderer.setColor(0, 0.5f, 1, 1);
+                float tailLen = 100f;
+                float tailX = p.getX() - p.getVx() * tailLen;
+                float tailY = p.getY() - p.getVy() * tailLen;
+                shapeRenderer.rectLine(tailX, tailY, p.getX(), p.getY(), 3);
             } else {
                 shapeRenderer.setColor(1, 0, 0, 1);
+                shapeRenderer.circle(p.getX(), p.getY(), p.getSize() / 2f);
             }
-            shapeRenderer.circle(p.getX(), p.getY(), p.getSize() / 2f);
         }
     }
 

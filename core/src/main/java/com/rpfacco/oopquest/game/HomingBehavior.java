@@ -5,16 +5,24 @@ import com.rpfacco.oopquest.game.data.ProjectileEntity;
 
 public class HomingBehavior implements ProjectileBehavior {
 
+    private final EnemyEntity target;
     private final float turnRate;
+    private boolean targetAlive;
 
-    public HomingBehavior(float turnRate) {
-        this.turnRate = turnRate;
+    public HomingBehavior(EnemyEntity target, float speed, float distance) {
+        this.target = target;
+        this.targetAlive = true;
+        this.turnRate = 2f * 2f * speed / distance;
     }
 
     @Override
     public void update(ProjectileEntity p, float delta, Array<EnemyEntity> enemies) {
-        EnemyEntity target = findNearest(p, enemies);
-        if (target == null) return;
+        if (!targetAlive) return;
+
+        if (!enemies.contains(target, true)) {
+            targetAlive = false;
+            return;
+        }
 
         float dx = target.getCenterX() - p.getX();
         float dy = target.getCenterY() - p.getY();
@@ -34,20 +42,5 @@ public class HomingBehavior implements ProjectileBehavior {
         float newAngle = currentAngle + diff;
         p.setVx((float) Math.cos(newAngle));
         p.setVy((float) Math.sin(newAngle));
-    }
-
-    private EnemyEntity findNearest(ProjectileEntity p, Array<EnemyEntity> enemies) {
-        EnemyEntity nearest = null;
-        float minDist = Float.MAX_VALUE;
-        for (EnemyEntity enemy : enemies) {
-            float dx = enemy.getCenterX() - p.getX();
-            float dy = enemy.getCenterY() - p.getY();
-            float dist = dx * dx + dy * dy;
-            if (dist < minDist) {
-                minDist = dist;
-                nearest = enemy;
-            }
-        }
-        return nearest;
     }
 }
