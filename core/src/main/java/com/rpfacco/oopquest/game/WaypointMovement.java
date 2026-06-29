@@ -1,7 +1,6 @@
 package com.rpfacco.oopquest.game;
 
 import com.badlogic.gdx.utils.JsonValue;
-import com.rpfacco.oopquest.game.data.EnemyEntity;
 
 public class WaypointMovement implements MovementStrategy {
 
@@ -22,20 +21,20 @@ public class WaypointMovement implements MovementStrategy {
         float targetX = waypointX[currentWaypoint];
         float targetY = waypointY[currentWaypoint];
 
-        float dx = targetX - entity.x;
-        float dy = targetY - entity.y;
+        float dx = targetX - entity.getX();
+        float dy = targetY - entity.getY();
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (distance <= ARRIVAL_DISTANCE) {
-            entity.x = targetX;
-            entity.y = targetY;
+            entity.setX(targetX);
+            entity.setY(targetY);
             currentWaypoint = (currentWaypoint + 1) % waypointX.length;
             return;
         }
 
-        float step = entity.speed * delta;
-        entity.x += (dx / distance) * step;
-        entity.y += (dy / distance) * step;
+        float step = entity.getSpeed() * delta;
+        entity.setX(entity.getX() + (dx / distance) * step);
+        entity.setY(entity.getY() + (dy / distance) * step);
     }
 
     public static WaypointMovement fromJson(JsonValue config) {

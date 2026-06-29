@@ -2,7 +2,6 @@ package com.rpfacco.oopquest.game;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
-import com.rpfacco.oopquest.game.data.EnemyEntity;
 import com.rpfacco.oopquest.game.data.ProjectileEntity;
 
 public class EnemySystem {
@@ -17,8 +16,8 @@ public class EnemySystem {
         if (enemies == null) return;
 
         for (EnemyEntity enemy : enemies) {
-            if (!enemy.moving || enemy.strategy == null) continue;
-            enemy.strategy.update(enemy, delta);
+            if (!enemy.isMoving() || enemy.getStrategy() == null) continue;
+            enemy.getStrategy().update(enemy, delta);
         }
     }
 
@@ -26,8 +25,8 @@ public class EnemySystem {
         if (enemies == null) return;
 
         for (EnemyEntity enemy : enemies) {
-            if (enemy.shootPattern == null) continue;
-            Array<ProjectileEntity> projs = enemy.shootPattern.generate(enemy, player, delta);
+            if (enemy.getShootPattern() == null) continue;
+            Array<ProjectileEntity> projs = enemy.getShootPattern().generate(enemy, player, delta);
             for (ProjectileEntity p : projs) {
                 if (p != null) projectileSystem.add(p);
             }
@@ -39,7 +38,11 @@ public class EnemySystem {
 
         shapeRenderer.setColor(1, 0, 0, 1);
         for (EnemyEntity enemy : enemies) {
-            shapeRenderer.rect(enemy.x, enemy.y, enemy.width, enemy.height);
+            shapeRenderer.rect(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
         }
+    }
+
+    public Array<EnemyEntity> getEnemies() {
+        return enemies;
     }
 }

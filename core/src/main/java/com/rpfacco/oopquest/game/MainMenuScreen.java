@@ -12,9 +12,6 @@ import com.rpfacco.oopquest.game.OopQuest;
 
 public class MainMenuScreen implements Screen {
 
-    private static final float SCREEN_WIDTH = 1920;
-    private static final float SCREEN_HEIGHT = 1080;
-
     private final OopQuest jogoGame;
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -28,8 +25,8 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         camera = new OrthographicCamera();
-        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
-        camera.position.set(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f, 0);
+        viewport = new FitViewport(GameConfig.MAP_WIDTH, GameConfig.MAP_HEIGHT, camera);
+        camera.position.set(GameConfig.MAP_WIDTH / 2f, GameConfig.MAP_HEIGHT / 2f, 0);
         camera.update();
 
         batch = new SpriteBatch();
@@ -41,7 +38,7 @@ public class MainMenuScreen implements Screen {
         if (Gdx.input.justTouched()) {
             GameState gs = jogoGame.getGameState();
             gs.reset();
-            Gdx.app.log("MainMenuScreen", "reset -> lives=" + gs.lives + " quizzes=" + gs.completedQuizzes.size());
+            Gdx.app.log("MainMenuScreen", "reset -> lives=" + gs.getLives() + " quizzes=" + gs.getCompletedCount());
             jogoGame.setScreen(new GameplayScreen(jogoGame));
             dispose();
             return;

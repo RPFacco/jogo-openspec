@@ -31,11 +31,11 @@ public class NpcLoader {
             Array<NpcEntity> npcs = new Array<>();
             for (JsonValue npcVal = entry.child; npcVal != null; npcVal = npcVal.next) {
                 NpcEntity npc = new NpcEntity();
-                npc.x = npcVal.getFloat("x");
-                npc.y = npcVal.getFloat("y");
-                npc.width = npcVal.getFloat("width");
-                npc.height = npcVal.getFloat("height");
-                npc.quizId = npcVal.getString("quizId");
+                npc.setX(npcVal.getFloat("x"));
+                npc.setY(npcVal.getFloat("y"));
+                npc.setWidth(npcVal.getFloat("width"));
+                npc.setHeight(npcVal.getFloat("height"));
+                npc.setQuizId(npcVal.getString("quizId"));
                 npcs.add(npc);
             }
             cache.put(mapId, npcs);

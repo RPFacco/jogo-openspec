@@ -27,13 +27,14 @@ public class QuizLoader {
         cache = new HashMap<>();
         for (JsonValue entry = root.child; entry != null; entry = entry.next) {
             QuizData quiz = new QuizData();
-            quiz.question = entry.getString("question");
+            quiz.setQuestion(entry.getString("question"));
             JsonValue choicesArr = entry.get("choices");
-            quiz.choices = new String[choicesArr.size];
+            String[] choices = new String[choicesArr.size];
             for (int i = 0; i < choicesArr.size; i++) {
-                quiz.choices[i] = choicesArr.getString(i);
+                choices[i] = choicesArr.getString(i);
             }
-            quiz.correct = entry.getInt("correct");
+            quiz.setChoices(choices);
+            quiz.setCorrect(entry.getInt("correct"));
             cache.put(entry.name, quiz);
         }
         return cache;

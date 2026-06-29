@@ -3,10 +3,15 @@ package com.rpfacco.oopquest.game.data;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class MapData {
-    public String startMap;
-    public ObjectMap<String, MapEntry> maps;
+
+    private String startMap;
+    private ObjectMap<String, MapEntry> maps;
 
     public MapData() {
         this.maps = new ObjectMap<>();
     }
+
+    public String getStartMap() { return startMap; }
+    public void setStartMap(String startMap) { this.startMap = startMap; }
+    public ObjectMap<String, MapEntry> getMaps() { return maps; }
 }

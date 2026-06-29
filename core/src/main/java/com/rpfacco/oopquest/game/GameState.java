@@ -4,12 +4,33 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GameState {
-    public int lives;
-    public Set<String> completedQuizzes;
+
+    private int lives;
+    private Set<String> completedQuizzes;
 
     public GameState() {
         this.lives = 5;
         this.completedQuizzes = new HashSet<>();
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void takeDamage() {
+        lives--;
+    }
+
+    public boolean isCompleted(String quizId) {
+        return completedQuizzes.contains(quizId);
+    }
+
+    public void markCompleted(String quizId) {
+        completedQuizzes.add(quizId);
+    }
+
+    public int getCompletedCount() {
+        return completedQuizzes.size();
     }
 
     public void reset() {

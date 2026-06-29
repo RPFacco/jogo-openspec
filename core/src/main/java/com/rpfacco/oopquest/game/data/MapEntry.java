@@ -3,9 +3,17 @@ package com.rpfacco.oopquest.game.data;
 import com.badlogic.gdx.utils.Array;
 
 public class MapEntry {
-    public String id;
-    public String file;
-    public Array<MoveEntity> moveEntities;
+
+    private String id;
+    private String file;
+    private Array<MoveEntity> moveEntities;
 
     public MapEntry() {}
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getFile() { return file; }
+    public void setFile(String file) { this.file = file; }
+    public Array<MoveEntity> getMoveEntities() { return moveEntities; }
+    public void setMoveEntities(Array<MoveEntity> moveEntities) { this.moveEntities = moveEntities; }
 }

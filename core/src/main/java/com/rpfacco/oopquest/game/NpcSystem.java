@@ -29,20 +29,20 @@ public class NpcSystem {
         if (npcs == null) return;
 
         for (NpcEntity npc : npcs) {
-            if (gameState.completedQuizzes.contains(npc.quizId)) continue;
+            if (gameState.isCompleted(npc.getQuizId())) continue;
 
-            float triggerWidth = npc.width * 2.0f;
-            float triggerHeight = npc.height * 2.0f;
-            float triggerX = npc.x - (triggerWidth - npc.width) / 2f;
-            float triggerY = npc.y - (triggerHeight - npc.height) / 2f;
+            float triggerWidth = npc.getWidth() * 2.0f;
+            float triggerHeight = npc.getHeight() * 2.0f;
+            float triggerX = npc.getX() - (triggerWidth - npc.getWidth()) / 2f;
+            float triggerY = npc.getY() - (triggerHeight - npc.getHeight()) / 2f;
             npcTriggerRect.set(triggerX, triggerY, triggerWidth, triggerHeight);
 
             if (playerRect.overlaps(npcTriggerRect)) {
-                QuizData quiz = quizzes.get(npc.quizId);
+                QuizData quiz = quizzes.get(npc.getQuizId());
                 if (quiz != null) {
-                    handler.onQuizTrigger(npc.quizId, quiz);
+                    handler.onQuizTrigger(npc.getQuizId(), quiz);
                 } else {
-                    Gdx.app.log("NpcSystem", "Quiz ID " + npc.quizId + " not found for NPC at (" + npc.x + ", " + npc.y + ")");
+                    Gdx.app.log("NpcSystem", "Quiz ID " + npc.getQuizId() + " not found for NPC at (" + npc.getX() + ", " + npc.getY() + ")");
                 }
                 return;
             }
@@ -52,12 +52,12 @@ public class NpcSystem {
     public void render(ShapeRenderer shapeRenderer, GameState gameState) {
         if (npcs == null) return;
         for (NpcEntity npc : npcs) {
-            if (gameState.completedQuizzes.contains(npc.quizId)) {
+            if (gameState.isCompleted(npc.getQuizId())) {
                 shapeRenderer.setColor(128f / 255, 128f / 255, 128f / 255, 1);
             } else {
                 shapeRenderer.setColor(1, 165f / 255, 0, 1);
             }
-            shapeRenderer.rect(npc.x, npc.y, npc.width, npc.height);
+            shapeRenderer.rect(npc.getX(), npc.getY(), npc.getWidth(), npc.getHeight());
         }
     }
 }

@@ -2,12 +2,12 @@ package com.rpfacco.oopquest.game;
 
 public class Player {
 
-    public float x;
-    public float y;
-    public float width = 24;
-    public float height = 24;
-    public float speed = 320f;
-    public float invincibleTimer;
+    private float x;
+    private float y;
+    private float width = 24;
+    private float height = 24;
+    private float speed = 320f;
+    private float invincibleTimer;
 
     private float targetX;
     private float targetY;
@@ -22,6 +22,16 @@ public class Player {
         this.targetY = startY;
         this.moving = false;
     }
+
+    public float getX() { return x; }
+    public void setX(float x) { this.x = x; }
+    public float getY() { return y; }
+    public void setY(float y) { this.y = y; }
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
+    public float getSpeed() { return speed; }
+    public float getInvincibleTimer() { return invincibleTimer; }
+    public void setInvincibleTimer(float invincibleTimer) { this.invincibleTimer = invincibleTimer; }
 
     public void setTarget(float tx, float ty) {
         this.targetX = tx;
@@ -51,5 +61,13 @@ public class Player {
 
     public boolean isMoving() {
         return moving;
+    }
+
+    public float getCenterX() {
+        return x + width / 2f;
+    }
+
+    public float getCenterY() {
+        return y + height / 2f;
     }
 }

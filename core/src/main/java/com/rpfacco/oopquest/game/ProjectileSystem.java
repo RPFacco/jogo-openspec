@@ -8,9 +8,6 @@ import java.util.function.Consumer;
 
 public class ProjectileSystem {
 
-    private static final float MAP_WIDTH = 1920;
-    private static final float MAP_HEIGHT = 1080;
-
     private Array<ProjectileEntity> projectiles;
 
     public ProjectileSystem() {
@@ -20,36 +17,36 @@ public class ProjectileSystem {
     public void update(Player player, float delta, Consumer<ProjectileEntity> onHit) {
         for (int i = projectiles.size - 1; i >= 0; i--) {
             ProjectileEntity p = projectiles.get(i);
-            if (!p.alive) {
+            if (!p.isAlive()) {
                 projectiles.removeIndex(i);
                 continue;
             }
 
-            p.x += p.vx * p.speed * delta;
-            p.y += p.vy * p.speed * delta;
+            p.setX(p.getX() + p.getVx() * p.getSpeed() * delta);
+            p.setY(p.getY() + p.getVy() * p.getSpeed() * delta);
 
-            if (p.x < -p.size || p.x > MAP_WIDTH + p.size
-                    || p.y < -p.size || p.y > MAP_HEIGHT + p.size) {
-                p.alive = false;
+            if (p.getX() < -p.getSize() || p.getX() > GameConfig.MAP_WIDTH + p.getSize()
+                    || p.getY() < -p.getSize() || p.getY() > GameConfig.MAP_HEIGHT + p.getSize()) {
+                p.setAlive(false);
                 projectiles.removeIndex(i);
                 continue;
             }
 
             if (circleRectCollision(p, player)) {
                 onHit.accept(p);
-                p.alive = false;
+                p.setAlive(false);
                 projectiles.removeIndex(i);
             }
         }
     }
 
     private boolean circleRectCollision(ProjectileEntity p, Player player) {
-        float cx = p.x;
-        float cy = p.y;
-        float r = p.size / 2f;
+        float cx = p.getX();
+        float cy = p.getY();
+        float r = p.getSize() / 2f;
 
-        float closestX = Math.max(player.x, Math.min(cx, player.x + player.width));
-        float closestY = Math.max(player.y, Math.min(cy, player.y + player.height));
+        float closestX = Math.max(player.getX(), Math.min(cx, player.getX() + player.getWidth()));
+        float closestY = Math.max(player.getY(), Math.min(cy, player.getY() + player.getHeight()));
 
         float dx = cx - closestX;
         float dy = cy - closestY;
@@ -59,8 +56,8 @@ public class ProjectileSystem {
     public void render(ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(1, 0, 0, 1);
         for (ProjectileEntity p : projectiles) {
-            if (p.alive) {
-                shapeRenderer.circle(p.x, p.y, p.size / 2f);
+            if (p.isAlive()) {
+                shapeRenderer.circle(p.getX(), p.getY(), p.getSize() / 2f);
             }
         }
     }

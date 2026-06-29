@@ -18,9 +18,6 @@ import com.rpfacco.oopquest.game.OopQuest;
 
 public class QuizScreen implements Screen {
 
-    private static final float SCREEN_WIDTH = 1920;
-    private static final float SCREEN_HEIGHT = 1080;
-
     private final OopQuest jogoGame;
     private final Screen gameplayScreen;
     private final String quizId;
@@ -47,8 +44,8 @@ public class QuizScreen implements Screen {
     @Override
     public void show() {
         camera = new OrthographicCamera();
-        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
-        camera.position.set(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f, 0);
+        viewport = new FitViewport(GameConfig.MAP_WIDTH, GameConfig.MAP_HEIGHT, camera);
+        camera.position.set(GameConfig.MAP_WIDTH / 2f, GameConfig.MAP_HEIGHT / 2f, 0);
         camera.update();
 
         batch = new SpriteBatch();
@@ -58,13 +55,13 @@ public class QuizScreen implements Screen {
         touchPos = new Vector3();
         glyphLayout = new GlyphLayout();
 
-        choiceRects = new Rectangle[quiz.choices.length];
+        choiceRects = new Rectangle[quiz.getChoices().length];
         float boxWidth = 800;
         float boxHeight = 60;
         float startY = 500;
-        for (int i = 0; i < quiz.choices.length; i++) {
+        for (int i = 0; i < quiz.getChoices().length; i++) {
             choiceRects[i] = new Rectangle(
-                (SCREEN_WIDTH - boxWidth) / 2f,
+                (GameConfig.MAP_WIDTH - boxWidth) / 2f,
                 startY - i * (boxHeight + 20),
                 boxWidth,
                 boxHeight
@@ -87,20 +84,20 @@ public class QuizScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        float questionY = SCREEN_HEIGHT - 100;
-        glyphLayout.setText(font, quiz.question);
-        float questionX = (SCREEN_WIDTH - glyphLayout.width) / 2f;
-        font.draw(batch, quiz.question, questionX, questionY);
+        float questionY = GameConfig.MAP_HEIGHT - 100;
+        glyphLayout.setText(font, quiz.getQuestion());
+        float questionX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
+        font.draw(batch, quiz.getQuestion(), questionX, questionY);
 
-        for (int i = 0; i < quiz.choices.length; i++) {
+        for (int i = 0; i < quiz.getChoices().length; i++) {
             Rectangle rect = choiceRects[i];
             float textX = rect.x + 20;
             float textY = rect.y + rect.height / 2f + font.getCapHeight() / 2f;
-            font.draw(batch, (i + 1) + ". " + quiz.choices[i], textX, textY);
+            font.draw(batch, (i + 1) + ". " + quiz.getChoices()[i], textX, textY);
         }
 
         GameState gameState = jogoGame.getGameState();
-        font.draw(batch, "Lives: " + gameState.lives, 30, SCREEN_HEIGHT - 30);
+        font.draw(batch, "Lives: " + gameState.getLives(), 30, GameConfig.MAP_HEIGHT - 30);
 
         batch.end();
 
@@ -116,7 +113,7 @@ public class QuizScreen implements Screen {
             GameState gs = jogoGame.getGameState();
             Gdx.app.log("QuizScreen", "gameOver, resetting state");
             gs.reset();
-            Gdx.app.log("QuizScreen", "after reset -> lives=" + gs.lives + " quizzes=" + gs.completedQuizzes.size());
+            Gdx.app.log("QuizScreen", "after reset -> lives=" + gs.getLives() + " quizzes=" + gs.getCompletedCount());
             dispose();
             jogoGame.setScreen(new MainMenuScreen(jogoGame));
         }
@@ -132,10 +129,10 @@ public class QuizScreen implements Screen {
             if (choiceRects[i].contains(touchPos.x, touchPos.y)) {
                 GameState gameState = jogoGame.getGameState();
 
-                if (i == quiz.correct) {
-                    gameState.completedQuizzes.add(quizId);
+                if (i == quiz.getCorrect()) {
+                    gameState.markCompleted(quizId);
                     leaving = true;
-                    if (gameState.completedQuizzes.size() >= QuizLoader.load().size()) {
+                    if (gameState.getCompletedCount() >= QuizLoader.load().size()) {
                         Gdx.app.log("QuizScreen", "all quizzes completed, resetting");
                         gameState.reset();
                         jogoGame.setScreen(new MainMenuScreen(jogoGame));
@@ -143,8 +140,8 @@ public class QuizScreen implements Screen {
                         jogoGame.setScreen(gameplayScreen);
                     }
                 } else {
-                    gameState.lives--;
-                    if (gameState.lives <= 0) {
+                    gameState.takeDamage();
+                    if (gameState.getLives() <= 0) {
                         gameOver = true;
                     }
                 }

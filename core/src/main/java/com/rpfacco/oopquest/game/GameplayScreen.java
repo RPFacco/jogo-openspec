@@ -1,7 +1,6 @@
 package com.rpfacco.oopquest.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.function.Consumer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.rpfacco.oopquest.game.data.MapData;
 import com.rpfacco.oopquest.game.data.MapEntry;
@@ -28,9 +26,6 @@ import com.rpfacco.oopquest.game.data.QuizData;
 import com.rpfacco.oopquest.game.OopQuest;
 
 public class GameplayScreen implements Screen {
-
-    private static final float MAP_WIDTH = 1920;
-    private static final float MAP_HEIGHT = 1080;
 
     private final OopQuest jogoGame;
     private OrthographicCamera camera;
@@ -48,6 +43,8 @@ public class GameplayScreen implements Screen {
     private ProjectileSystem projectileSystem;
     private SpriteBatch batch;
     private BitmapFont font;
+    private InputHandler inputHandler;
+    private HudRenderer hudRenderer;
     private boolean initialized;
     private boolean leaving;
     private boolean gameOver;
@@ -62,8 +59,8 @@ public class GameplayScreen implements Screen {
         initialized = true;
 
         camera = new OrthographicCamera();
-        viewport = new FitViewport(MAP_WIDTH, MAP_HEIGHT, camera);
-        camera.position.set(MAP_WIDTH / 2f, MAP_HEIGHT / 2f, 0);
+        viewport = new FitViewport(GameConfig.MAP_WIDTH, GameConfig.MAP_HEIGHT, camera);
+        camera.position.set(GameConfig.MAP_WIDTH / 2f, GameConfig.MAP_HEIGHT / 2f, 0);
         camera.update();
 
         npcSystem = new NpcSystem();
@@ -71,11 +68,11 @@ public class GameplayScreen implements Screen {
         projectileSystem = new ProjectileSystem();
 
         mapData = MapLoader.load();
-        currentMapId = mapData.startMap;
+        currentMapId = mapData.getStartMap();
         loadMap(currentMapId);
 
-        float playerX = MAP_WIDTH / 2f - 12;
-        float playerY = MAP_HEIGHT / 2f - 12;
+        float playerX = GameConfig.MAP_WIDTH / 2f - 12;
+        float playerY = GameConfig.MAP_HEIGHT / 2f - 12;
         player = new Player(playerX, playerY);
 
         shapeRenderer = new ShapeRenderer();
@@ -84,6 +81,9 @@ public class GameplayScreen implements Screen {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.getData().setScale(2);
+
+        inputHandler = new InputHandler(viewport);
+        hudRenderer = new HudRenderer(batch, font);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class GameplayScreen implements Screen {
             return;
         }
         checkMoveEntityOverlap();
-        playerRect.set(player.x, player.y, player.width, player.height);
+        playerRect.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         npcSystem.checkProximity(playerRect, jogoGame.getGameState(), this::onNpcTrigger);
         clampPlayerToBounds();
 
@@ -120,17 +120,17 @@ public class GameplayScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        font.draw(batch, "Lives: " + jogoGame.getGameState().lives, 20, MAP_HEIGHT - 20);
+        hudRenderer.render(jogoGame.getGameState());
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        Array<MoveEntity> entities = mapData.maps.get(currentMapId).moveEntities;
+        Array<MoveEntity> entities = mapData.getMaps().get(currentMapId).getMoveEntities();
         if (entities != null) {
             shapeRenderer.setColor(1, 215f / 255, 0, 1);
             for (MoveEntity me : entities) {
-                shapeRenderer.rect(me.x, me.y, me.width, me.height);
+                shapeRenderer.rect(me.getX(), me.getY(), me.getWidth(), me.getHeight());
             }
         }
 
@@ -138,38 +138,36 @@ public class GameplayScreen implements Screen {
         enemySystem.render(shapeRenderer);
         projectileSystem.render(shapeRenderer);
 
-        if (!(player.invincibleTimer > 0 && (int)(player.invincibleTimer * 10) % 2 == 0)) {
+        if (!(player.getInvincibleTimer() > 0 && (int)(player.getInvincibleTimer() * 10) % 2 == 0)) {
             shapeRenderer.setColor(0.6f, 0.2f, 0.8f, 1);
-            shapeRenderer.rect(player.x, player.y, player.width, player.height);
+            shapeRenderer.rect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         }
         shapeRenderer.end();
     }
 
     private void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (inputHandler.isEscPressed()) {
             leaving = true;
             return;
         }
 
-        if (Gdx.input.justTouched()) {
-            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            viewport.unproject(touchPos);
-
-            if (touchPos.x >= 0 && touchPos.x <= MAP_WIDTH
-                    && touchPos.y >= 0 && touchPos.y <= MAP_HEIGHT) {
+        Vector3 touchPos = inputHandler.handleTouch();
+        if (touchPos != null) {
+            if (touchPos.x >= 0 && touchPos.x <= GameConfig.MAP_WIDTH
+                    && touchPos.y >= 0 && touchPos.y <= GameConfig.MAP_HEIGHT) {
                 player.setTarget(touchPos.x, touchPos.y);
             }
         }
     }
 
     private void checkMoveEntityOverlap() {
-        Array<MoveEntity> entities = mapData.maps.get(currentMapId).moveEntities;
+        Array<MoveEntity> entities = mapData.getMaps().get(currentMapId).getMoveEntities();
         if (entities == null) return;
 
-        playerRect.set(player.x, player.y, player.width, player.height);
+        playerRect.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
         for (MoveEntity me : entities) {
-            entityRect.set(me.x, me.y, me.width, me.height);
+            entityRect.set(me.getX(), me.getY(), me.getWidth(), me.getHeight());
             if (playerRect.overlaps(entityRect)) {
                 transitionTo(me);
                 return;
@@ -178,18 +176,18 @@ public class GameplayScreen implements Screen {
     }
 
     private void transitionTo(MoveEntity me) {
-        loadMap(me.targetMap);
-        player.x = me.spawnX;
-        player.y = me.spawnY;
-        player.setTarget(player.x, player.y);
+        loadMap(me.getTargetMap());
+        player.setX(me.getSpawnX());
+        player.setY(me.getSpawnY());
+        player.setTarget(player.getX(), player.getY());
     }
 
     private void loadMap(String mapId) {
         if (tiledMap != null) tiledMap.dispose();
         if (mapRenderer != null) mapRenderer.dispose();
 
-        MapEntry mapEntry = mapData.maps.get(mapId);
-        tiledMap = new TmxMapLoader().load(mapEntry.file);
+        MapEntry mapEntry = mapData.getMaps().get(mapId);
+        tiledMap = new TmxMapLoader().load(mapEntry.getFile());
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         currentMapId = mapId;
 
@@ -199,24 +197,24 @@ public class GameplayScreen implements Screen {
     }
 
     private void onNpcTrigger(String quizId, QuizData quiz) {
-        player.setTarget(player.x, player.y);
+        player.setTarget(player.getX(), player.getY());
         jogoGame.setScreen(new QuizScreen(jogoGame, this, quizId, quiz));
     }
 
     private void onProjectileHit(ProjectileEntity p) {
-        if (player.invincibleTimer > 0) return;
-        jogoGame.getGameState().lives--;
-        player.invincibleTimer = 1f;
-        if (jogoGame.getGameState().lives <= 0) {
+        if (player.getInvincibleTimer() > 0) return;
+        jogoGame.getGameState().takeDamage();
+        player.setInvincibleTimer(1f);
+        if (jogoGame.getGameState().getLives() <= 0) {
             gameOver = true;
         }
     }
 
     private void clampPlayerToBounds() {
-        if (player.x < 0) player.x = 0;
-        if (player.y < 0) player.y = 0;
-        if (player.x + player.width > MAP_WIDTH) player.x = MAP_WIDTH - player.width;
-        if (player.y + player.height > MAP_HEIGHT) player.y = MAP_HEIGHT - player.height;
+        if (player.getX() < 0) player.setX(0);
+        if (player.getY() < 0) player.setY(0);
+        if (player.getX() + player.getWidth() > GameConfig.MAP_WIDTH) player.setX(GameConfig.MAP_WIDTH - player.getWidth());
+        if (player.getY() + player.getHeight() > GameConfig.MAP_HEIGHT) player.setY(GameConfig.MAP_HEIGHT - player.getHeight());
     }
 
     @Override

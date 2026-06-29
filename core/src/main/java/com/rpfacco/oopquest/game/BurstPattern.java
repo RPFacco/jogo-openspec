@@ -2,7 +2,6 @@ package com.rpfacco.oopquest.game;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import com.rpfacco.oopquest.game.data.EnemyEntity;
 import com.rpfacco.oopquest.game.data.ProjectileEntity;
 
 public class BurstPattern implements ShootPattern {
@@ -61,10 +60,10 @@ public class BurstPattern implements ShootPattern {
     }
 
     private ProjectileEntity createProjectile(EnemyEntity enemy, Player player) {
-        float cx = enemy.x + enemy.width / 2f;
-        float cy = enemy.y + enemy.height / 2f;
-        float px = player.x + player.width / 2f;
-        float py = player.y + player.height / 2f;
+        float cx = enemy.getCenterX();
+        float cy = enemy.getCenterY();
+        float px = player.getCenterX();
+        float py = player.getCenterY();
 
         float dx = px - cx;
         float dy = py - cy;
@@ -74,13 +73,13 @@ public class BurstPattern implements ShootPattern {
         float vy = dy / dist;
 
         ProjectileEntity p = new ProjectileEntity();
-        p.x = cx;
-        p.y = cy;
-        p.vx = vx;
-        p.vy = vy;
-        p.speed = enemy.bulletSpeed;
-        p.size = 16;
-        p.alive = true;
+        p.setX(cx);
+        p.setY(cy);
+        p.setVx(vx);
+        p.setVy(vy);
+        p.setSpeed(enemy.getBulletSpeed());
+        p.setSize(16);
+        p.setAlive(true);
         return p;
     }
 

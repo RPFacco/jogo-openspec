@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rpfacco.oopquest.game.BurstPattern;
+import com.rpfacco.oopquest.game.EnemyEntity;
 import com.rpfacco.oopquest.game.MovementStrategy;
 import com.rpfacco.oopquest.game.ShootPattern;
 import com.rpfacco.oopquest.game.WaypointMovement;
@@ -35,20 +36,20 @@ public class EnemyLoader {
             Array<EnemyEntity> enemies = new Array<>();
             for (JsonValue enemyVal = entry.child; enemyVal != null; enemyVal = enemyVal.next) {
                 EnemyEntity enemy = new EnemyEntity();
-                enemy.x = enemyVal.getFloat("x");
-                enemy.y = enemyVal.getFloat("y");
-                enemy.width = enemyVal.getFloat("width");
-                enemy.height = enemyVal.getFloat("height");
-                enemy.speed = enemyVal.getFloat("speed");
-                enemy.bulletSpeed = enemyVal.has("bulletSpeed") ? enemyVal.getFloat("bulletSpeed") : enemy.speed;
-                enemy.moving = true;
+                enemy.setX(enemyVal.getFloat("x"));
+                enemy.setY(enemyVal.getFloat("y"));
+                enemy.setWidth(enemyVal.getFloat("width"));
+                enemy.setHeight(enemyVal.getFloat("height"));
+                enemy.setSpeed(enemyVal.getFloat("speed"));
+                enemy.setBulletSpeed(enemyVal.has("bulletSpeed") ? enemyVal.getFloat("bulletSpeed") : enemy.getSpeed());
+                enemy.setMoving(true);
 
                 JsonValue movement = enemyVal.get("movement");
                 if (movement != null) {
                     String type = movement.getString("type");
                     switch (type) {
                         case "waypoint":
-                            enemy.strategy = WaypointMovement.fromJson(movement);
+                            enemy.setStrategy(WaypointMovement.fromJson(movement));
                             break;
                         default:
                             Gdx.app.error("EnemyLoader", "Unknown movement type: " + type);
@@ -61,7 +62,7 @@ public class EnemyLoader {
                     String type = shoot.getString("type");
                     switch (type) {
                         case "burst":
-                            enemy.shootPattern = BurstPattern.fromJson(shoot);
+                            enemy.setShootPattern(BurstPattern.fromJson(shoot));
                             break;
                         default:
                             Gdx.app.error("EnemyLoader", "Unknown shoot type: " + type);
