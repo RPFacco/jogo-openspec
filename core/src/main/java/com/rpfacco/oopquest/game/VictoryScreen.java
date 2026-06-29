@@ -12,15 +12,15 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class VictoryScreen implements Screen {
 
-    private final OopQuest jogoGame;
+    private final OopQuest app;
     private OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
     private BitmapFont font;
     private GlyphLayout glyphLayout;
 
-    public VictoryScreen(OopQuest jogoGame) {
-        this.jogoGame = jogoGame;
+    public VictoryScreen(OopQuest app) {
+        this.app = app;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class VictoryScreen implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.justTouched()) {
-            jogoGame.setScreen(new MainMenuScreen(jogoGame));
+            app.setScreen(new MainMenuScreen(app));
             dispose();
             return;
         }

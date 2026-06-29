@@ -18,7 +18,7 @@ import com.rpfacco.oopquest.game.OopQuest;
 
 public class QuizScreen implements Screen {
 
-    private final OopQuest jogoGame;
+    private final OopQuest app;
     private final Screen gameplayScreen;
     private final String quizId;
     private final QuizData quiz;
@@ -34,8 +34,8 @@ public class QuizScreen implements Screen {
     private boolean leaving;
     private boolean gameOver;
 
-    public QuizScreen(OopQuest jogoGame, Screen gameplayScreen, String quizId, QuizData quiz) {
-        this.jogoGame = jogoGame;
+    public QuizScreen(OopQuest app, Screen gameplayScreen, String quizId, QuizData quiz) {
+        this.app = app;
         this.gameplayScreen = gameplayScreen;
         this.quizId = quizId;
         this.quiz = quiz;
@@ -78,9 +78,9 @@ public class QuizScreen implements Screen {
         }
         if (gameOver) {
             Gdx.app.log("QuizScreen", "gameOver, resetting state");
-            jogoGame.getGameState().reset();
+            app.getGameState().reset();
             dispose();
-            jogoGame.setScreen(new GameOverScreen(jogoGame));
+            app.setScreen(new GameOverScreen(app));
             return;
         }
 
@@ -103,7 +103,7 @@ public class QuizScreen implements Screen {
             font.draw(batch, (i + 1) + ". " + quiz.getChoices()[i], textX, textY);
         }
 
-        GameState gameState = jogoGame.getGameState();
+        GameState gameState = app.getGameState();
         font.draw(batch, "Lives: " + gameState.getLives(), 30, GameConfig.MAP_HEIGHT - 30);
 
         batch.end();
@@ -125,7 +125,7 @@ public class QuizScreen implements Screen {
 
         for (int i = 0; i < choiceRects.length; i++) {
             if (choiceRects[i].contains(touchPos.x, touchPos.y)) {
-                GameState gameState = jogoGame.getGameState();
+                GameState gameState = app.getGameState();
 
                 if (i == quiz.getCorrect()) {
                     gameState.markCompleted(quizId);
@@ -133,9 +133,9 @@ public class QuizScreen implements Screen {
                     if (gameState.getCompletedCount() >= QuizLoader.load().size()) {
                         Gdx.app.log("QuizScreen", "all quizzes completed, resetting");
                         gameState.reset();
-                        jogoGame.setScreen(new VictoryScreen(jogoGame));
+                        app.setScreen(new VictoryScreen(app));
                     } else {
-                        jogoGame.setScreen(gameplayScreen);
+                        app.setScreen(gameplayScreen);
                     }
                 } else {
                     gameState.takeDamage();

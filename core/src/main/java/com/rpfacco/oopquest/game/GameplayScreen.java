@@ -28,7 +28,7 @@ import com.rpfacco.oopquest.game.OopQuest;
 
 public class GameplayScreen implements Screen {
 
-    private final OopQuest jogoGame;
+    private final OopQuest app;
     private OrthographicCamera camera;
     private Viewport viewport;
     private TiledMap tiledMap;
@@ -51,8 +51,8 @@ public class GameplayScreen implements Screen {
     private boolean leaving;
     private boolean gameOver;
 
-    public GameplayScreen(OopQuest jogoGame) {
-        this.jogoGame = jogoGame;
+    public GameplayScreen(OopQuest app) {
+        this.app = app;
     }
 
     @Override
@@ -93,9 +93,9 @@ public class GameplayScreen implements Screen {
     public void render(float delta) {
         handleInput();
         if (leaving) {
-            jogoGame.getGameState().reset();
+            app.getGameState().reset();
             dispose();
-            jogoGame.setScreen(new MainMenuScreen(jogoGame));
+            app.setScreen(new MainMenuScreen(app));
             return;
         }
 
@@ -105,14 +105,14 @@ public class GameplayScreen implements Screen {
         enemySystem.updateShooting(player, delta, projectileSystem);
         projectileSystem.update(player, delta, enemySystem.getAliveEnemies(), this::onProjectileHit, this::onEnemyDeath);
         if (gameOver) {
-            jogoGame.getGameState().reset();
+            app.getGameState().reset();
             dispose();
-            jogoGame.setScreen(new GameOverScreen(jogoGame));
+            app.setScreen(new GameOverScreen(app));
             return;
         }
         checkMoveEntityOverlap();
         playerRect.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        npcSystem.checkProximity(playerRect, jogoGame.getGameState(), this::onNpcTrigger);
+        npcSystem.checkProximity(playerRect, app.getGameState(), this::onNpcTrigger);
         clampPlayerToBounds();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -124,7 +124,7 @@ public class GameplayScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        hudRenderer.render(jogoGame.getGameState());
+        hudRenderer.render(app.getGameState());
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -138,7 +138,7 @@ public class GameplayScreen implements Screen {
             }
         }
 
-        npcSystem.render(shapeRenderer, jogoGame.getGameState());
+        npcSystem.render(shapeRenderer, app.getGameState());
         enemySystem.render(shapeRenderer);
         enemySystem.renderHealthBars(shapeRenderer);
         projectileSystem.render(shapeRenderer);
@@ -223,22 +223,22 @@ public class GameplayScreen implements Screen {
 
     private void onNpcTrigger(String quizId, QuizData quiz) {
         player.setTarget(player.getX(), player.getY());
-        jogoGame.setScreen(new QuizScreen(jogoGame, this, quizId, quiz));
+        app.setScreen(new QuizScreen(app, this, quizId, quiz));
     }
 
     private void onEnemyDeath(EnemyEntity e) {
-        if (jogoGame.getGameState().isCompleted("3")) return;
+        if (app.getGameState().isCompleted("3")) return;
         QuizData quiz = QuizLoader.load().get("3");
         if (quiz != null) {
-            jogoGame.setScreen(new QuizScreen(jogoGame, this, "3", quiz));
+            app.setScreen(new QuizScreen(app, this, "3", quiz));
         }
     }
 
     private void onProjectileHit(ProjectileEntity p) {
         if (player.getInvincibleTimer() > 0) return;
-        jogoGame.getGameState().takeDamage();
+        app.getGameState().takeDamage();
         player.setInvincibleTimer(1f);
-        if (jogoGame.getGameState().getLives() <= 0) {
+        if (app.getGameState().getLives() <= 0) {
             gameOver = true;
         }
     }

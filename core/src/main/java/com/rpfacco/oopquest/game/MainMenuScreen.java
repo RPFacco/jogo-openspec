@@ -12,14 +12,14 @@ import com.rpfacco.oopquest.game.OopQuest;
 
 public class MainMenuScreen implements Screen {
 
-    private final OopQuest jogoGame;
+    private final OopQuest app;
     private OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
     private BitmapFont font;
 
-    public MainMenuScreen(OopQuest jogoGame) {
-        this.jogoGame = jogoGame;
+    public MainMenuScreen(OopQuest app) {
+        this.app = app;
     }
 
     @Override
@@ -36,10 +36,10 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.justTouched()) {
-            GameState gs = jogoGame.getGameState();
+            GameState gs = app.getGameState();
             gs.reset();
             Gdx.app.log("MainMenuScreen", "reset -> lives=" + gs.getLives() + " quizzes=" + gs.getCompletedCount());
-            jogoGame.setScreen(new GameplayScreen(jogoGame));
+            app.setScreen(new GameplayScreen(app));
             dispose();
             return;
         }
