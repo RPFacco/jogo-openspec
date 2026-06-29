@@ -9,6 +9,7 @@ public class EnemyEntity {
     public float width;
     public float height;
     public float speed;
+    public float bulletSpeed;
     public boolean moving;
     public MovementStrategy strategy;
     public ShootPattern shootPattern;

@@ -14,6 +14,7 @@ public class BurstPattern implements ShootPattern {
     private float timer;
     private int burstIndex;
     private boolean onCooldown;
+    private final Array<ProjectileEntity> resultBuffer = new Array<>();
 
     public BurstPattern(int burstSize, float cooldown) {
         this.burstSize = burstSize;
@@ -33,25 +34,30 @@ public class BurstPattern implements ShootPattern {
                 burstIndex = 0;
                 timer = 0;
             }
-            return new Array<>();
+            resultBuffer.clear();
+            return resultBuffer;
         }
 
         if (burstIndex >= burstSize) {
             onCooldown = true;
             timer = 0;
-            return new Array<>();
+            resultBuffer.clear();
+            return resultBuffer;
         }
 
         float fireTime = (burstIndex == 0) ? 0 : BURST_INTERVAL;
-        if (timer < fireTime) return new Array<>();
+        if (timer < fireTime) {
+            resultBuffer.clear();
+            return resultBuffer;
+        }
 
-        timer = 0;
+        timer -= fireTime;
         burstIndex++;
 
         ProjectileEntity p = createProjectile(enemy, player);
-        Array<ProjectileEntity> result = new Array<>();
-        result.add(p);
-        return result;
+        resultBuffer.clear();
+        resultBuffer.add(p);
+        return resultBuffer;
     }
 
     private ProjectileEntity createProjectile(EnemyEntity enemy, Player player) {
@@ -63,6 +69,7 @@ public class BurstPattern implements ShootPattern {
         float dx = px - cx;
         float dy = py - cy;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
+        if (dist == 0) dist = 1f;
         float vx = dx / dist;
         float vy = dy / dist;
 
@@ -71,7 +78,7 @@ public class BurstPattern implements ShootPattern {
         p.y = cy;
         p.vx = vx;
         p.vy = vy;
-        p.speed = enemy.speed;
+        p.speed = enemy.bulletSpeed;
         p.size = 16;
         p.alive = true;
         return p;

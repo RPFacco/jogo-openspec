@@ -40,6 +40,7 @@ public class EnemyLoader {
                 enemy.width = enemyVal.getFloat("width");
                 enemy.height = enemyVal.getFloat("height");
                 enemy.speed = enemyVal.getFloat("speed");
+                enemy.bulletSpeed = enemyVal.has("bulletSpeed") ? enemyVal.getFloat("bulletSpeed") : enemy.speed;
                 enemy.moving = true;
 
                 JsonValue movement = enemyVal.get("movement");
