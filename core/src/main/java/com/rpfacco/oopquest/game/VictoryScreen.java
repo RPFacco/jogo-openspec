@@ -28,22 +28,20 @@ public class VictoryScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        font.getData().setScale(3);
+        font.getData().setScale(5);
         glyphLayout.setText(font, "YOU FINISHED!");
         float titleX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        float titleY = GameConfig.MAP_HEIGHT / 2f + 80;
+        float titleY = GameConfig.MAP_HEIGHT / 2f + 150;
         font.draw(batch, "YOU FINISHED!", titleX, titleY);
 
-        font.getData().setScale(2);
         glyphLayout.setText(font, "Congratulations!");
         float subX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        float subY = titleY - 80;
+        float subY = titleY - 120;
         font.draw(batch, "Congratulations!", subX, subY);
 
-        font.getData().setScale(1.5f);
         glyphLayout.setText(font, "Click to continue");
         float clickX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        float clickY = subY - 80;
+        float clickY = subY - 120;
         font.draw(batch, "Click to continue", clickX, clickY);
 
         batch.end();

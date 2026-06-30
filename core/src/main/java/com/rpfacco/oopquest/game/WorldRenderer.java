@@ -2,6 +2,7 @@ package com.rpfacco.oopquest.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
@@ -11,9 +12,11 @@ import com.rpfacco.oopquest.game.data.model.Player;
 public class WorldRenderer {
 
     private final ShapeRenderer shapeRenderer;
+    private final GlyphLayout glyphLayout;
 
     public WorldRenderer() {
         this.shapeRenderer = new ShapeRenderer();
+        this.glyphLayout = new GlyphLayout();
     }
 
     public void renderMap(OrthographicCamera camera, MapManager mapManager) {
@@ -25,6 +28,8 @@ public class WorldRenderer {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         font.draw(batch, "Lives: " + gameState.getLives(), 20, GameConfig.MAP_HEIGHT - 20);
+        glyphLayout.setText(font, "ESC: Reset Game");
+        font.draw(batch, "ESC: Reset Game", GameConfig.MAP_WIDTH - glyphLayout.width - 20, GameConfig.MAP_HEIGHT - 20);
         batch.end();
     }
 

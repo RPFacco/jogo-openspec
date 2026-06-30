@@ -37,7 +37,7 @@ public class GameplayScreen extends BaseScreen {
         if (initialized) return;
         initialized = true;
         super.show();
-        font.getData().setScale(2);
+        font.getData().setScale(4);
 
         DataManager dataManager = app.getDataManager();
         playerSystem = new PlayerSystem();
@@ -48,8 +48,8 @@ public class GameplayScreen extends BaseScreen {
         mapManager = new MapManager(dataManager, npcSystem, enemySystem, projectileSystem);
         mapManager.loadMap(mapManager.getStartMap());
 
-        float playerX = GameConfig.MAP_WIDTH / 2f - 12;
-        float playerY = GameConfig.MAP_HEIGHT / 2f - 12;
+        float playerX = GameConfig.MAP_WIDTH / 2f - 24;
+        float playerY = GameConfig.MAP_HEIGHT / 2f - 24;
         player = new Player(playerX, playerY);
 
         playerRect = new Rectangle();

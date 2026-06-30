@@ -4,9 +4,9 @@ public class Player {
 
     private float x;
     private float y;
-    private float width = 24;
-    private float height = 24;
-    private float speed = 320f;
+    private float width = 48;
+    private float height = 48;
+    private float speed = 480f;
     private float invincibleTimer;
 
     private float targetX;

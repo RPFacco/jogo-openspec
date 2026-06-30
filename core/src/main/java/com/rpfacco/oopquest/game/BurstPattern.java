@@ -81,7 +81,7 @@ public class BurstPattern implements ShootPattern {
         p.setVx(vx);
         p.setVy(vy);
         p.setSpeed(enemy.getBulletSpeed());
-        p.setSize(16);
+        p.setSize(32);
         p.setAlive(true);
         return p;
     }

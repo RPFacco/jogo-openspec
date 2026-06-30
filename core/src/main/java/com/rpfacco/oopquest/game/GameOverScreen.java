@@ -28,16 +28,15 @@ public class GameOverScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        font.getData().setScale(3);
+        font.getData().setScale(5);
         glyphLayout.setText(font, "GAME OVER");
         float titleX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        float titleY = GameConfig.MAP_HEIGHT / 2f + 50;
+        float titleY = GameConfig.MAP_HEIGHT / 2f + 100;
         font.draw(batch, "GAME OVER", titleX, titleY);
 
-        font.getData().setScale(1.5f);
         glyphLayout.setText(font, "Click to continue");
         float clickX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        float clickY = titleY - 100;
+        float clickY = titleY - 120;
         font.draw(batch, "Click to continue", clickX, clickY);
 
         batch.end();

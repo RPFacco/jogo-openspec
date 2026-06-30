@@ -21,6 +21,7 @@ public class QuizScreen extends BaseScreen {
     private Rectangle[] choiceRects;
     private Vector3 touchPos;
     private GlyphLayout glyphLayout;
+    private float questionY;
     private boolean leaving;
     private boolean gameOver;
 
@@ -35,21 +36,43 @@ public class QuizScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        font.getData().setScale(2);
+        font.getData().setScale(4);
         shapeRenderer = new ShapeRenderer();
         touchPos = new Vector3();
         glyphLayout = new GlyphLayout();
 
-        choiceRects = new Rectangle[quiz.getChoices().length];
-        float boxWidth = 800;
-        float boxHeight = 60;
-        float startY = 500;
-        for (int i = 0; i < quiz.getChoices().length; i++) {
+        int n = quiz.getChoices().length;
+        choiceRects = new Rectangle[n];
+
+        float pad = 20;
+        float lineH = font.getLineHeight();
+        float boxH = lineH + pad * 2;
+        float gap = 15;
+
+        float maxW = 0;
+        for (int i = 0; i < n; i++) {
+            glyphLayout.setText(font, (i + 1) + ". " + quiz.getChoices()[i]);
+            if (glyphLayout.width > maxW) maxW = glyphLayout.width;
+        }
+        float boxW = Math.min(maxW + pad * 2, GameConfig.MAP_WIDTH - 160);
+
+        glyphLayout.setText(font, quiz.getQuestion());
+        float questionH = glyphLayout.height;
+        float questionToChoicesGap = 80;
+        float choicesH = n * boxH + (n - 1) * gap;
+        float totalGroupH = questionH + questionToChoicesGap + choicesH;
+        float groupTopY = GameConfig.MAP_HEIGHT / 2f + totalGroupH / 2f;
+
+        questionY = groupTopY - font.getAscent();
+        float boxTopY = groupTopY - questionH - questionToChoicesGap;
+        float firstBoxY = boxTopY - boxH;
+
+        for (int i = 0; i < n; i++) {
             choiceRects[i] = new Rectangle(
-                (GameConfig.MAP_WIDTH - boxWidth) / 2f,
-                startY - i * (boxHeight + 20),
-                boxWidth,
-                boxHeight
+                (GameConfig.MAP_WIDTH - boxW) / 2f,
+                firstBoxY - i * (boxH + gap),
+                boxW,
+                boxH
             );
         }
     }
@@ -76,20 +99,25 @@ public class QuizScreen extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        float questionY = GameConfig.MAP_HEIGHT - 100;
+        GameState gameState = app.getGameState();
+
+        font.draw(batch, "Lives: " + gameState.getLives(), 20, GameConfig.MAP_HEIGHT - 20);
+        glyphLayout.setText(font, "ESC: Reset Game");
+        font.draw(batch, "ESC: Reset Game", GameConfig.MAP_WIDTH - glyphLayout.width - 20, GameConfig.MAP_HEIGHT - 20);
+
         glyphLayout.setText(font, quiz.getQuestion());
-        float questionX = (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f;
-        font.draw(batch, quiz.getQuestion(), questionX, questionY);
+        font.draw(batch, quiz.getQuestion(),
+            (GameConfig.MAP_WIDTH - glyphLayout.width) / 2f,
+            questionY);
 
         for (int i = 0; i < quiz.getChoices().length; i++) {
             Rectangle rect = choiceRects[i];
-            float textX = rect.x + 20;
+            String label = (i + 1) + ". " + quiz.getChoices()[i];
+            glyphLayout.setText(font, label);
+            float textX = rect.x + (rect.width - glyphLayout.width) / 2f;
             float textY = rect.y + rect.height / 2f + font.getCapHeight() / 2f;
-            font.draw(batch, (i + 1) + ". " + quiz.getChoices()[i], textX, textY);
+            font.draw(batch, label, textX, textY);
         }
-
-        GameState gameState = app.getGameState();
-        font.draw(batch, "Lives: " + gameState.getLives(), 30, GameConfig.MAP_HEIGHT - 30);
 
         batch.end();
 
